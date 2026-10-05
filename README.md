@@ -1,245 +1,201 @@
-<p align="center">
-  <a href="README.md">English</a> ·
-  <a href="docs/readme/README.bg.md">Български</a> ·
-  <a href="docs/readme/README.pt-BR.md">Português (Brasil)</a> ·
-  <a href="docs/readme/README.cs.md">Čeština</a> ·
-  <a href="docs/readme/README.nl.md">Nederlands</a> ·
-  <a href="docs/readme/README.fr.md">Français</a> ·
-  <a href="docs/readme/README.fi.md">Suomi</a> ·
-  <a href="docs/readme/README.de.md">Deutsch</a> ·
-  <a href="docs/readme/README.el.md">Ελληνικά</a> ·
-  <a href="docs/readme/README.hu.md">Magyar</a> ·
-  <a href="docs/readme/README.it.md">Italiano</a> ·
-  <a href="docs/readme/README.ja.md">日本語</a> ·
-  <a href="docs/readme/README.ko.md">한국어</a> ·
-  <a href="docs/readme/README.pl.md">Polski</a> ·
-  <a href="docs/readme/README.ru.md">Русский</a> ·
-  <a href="docs/readme/README.zh-CN.md">简体中文</a> ·
-  <a href="docs/readme/README.es.md">Español</a> ·
-  <a href="docs/readme/README.zh-TW.md">繁體中文</a> ·
-  <a href="docs/readme/README.tr.md">Türkçe</a> ·
-  <a href="docs/readme/README.hi.md">हिन्दी</a> ·
-  <a href="docs/readme/README.ar.md">العربية</a>
-</p>
+# Open CAD Studio — DPR Software
 
-<p align="center">
-  <img src="assets/logo.svg" width="112" alt="Open CAD Studio logo">
-</p>
+Open CAD Studio is a cross-platform CAD and drafting platform built with Rust. This repository combines the core desktop/editor application with a custom DPR (Daily Progress Report / quantity measurement) plugin workflow for construction and measurement tasks.
 
-<h1 align="center">Open CAD Studio</h1>
+The project supports desktop, browser-based, and plugin-driven workflows. The codebase is structured around a shared CAD document model, a plugin runtime interface, and optional platform-specific targets for Windows, Linux, macOS, and WebAssembly.
 
-<p align="center">
-  Open-source 2D drafting and 3D modeling for desktop and web, built with Rust.
-</p>
+## Project summary
 
-<p align="center">
-  <a href="https://github.com/HakanSeven12/OpenCADStudio/releases/latest"><img alt="Latest release" src="https://img.shields.io/github/v/release/HakanSeven12/OpenCADStudio"></a>
-  <a href="https://github.com/HakanSeven12/OpenCADStudio/releases"><img alt="Release downloads" src="https://img.shields.io/github/downloads/HakanSeven12/OpenCADStudio/total"></a>
-  <a href="https://github.com/HakanSeven12/OpenCADStudio/stargazers"><img alt="GitHub stars" src="https://img.shields.io/github/stars/HakanSeven12/OpenCADStudio"></a>
-  <a href="LICENSE"><img alt="GPL-3.0 license" src="https://img.shields.io/github/license/HakanSeven12/OpenCADStudio"></a>
-</p>
+- Core CAD engine for DWG/DXF workflows and document editing
+- Cross-platform desktop support for Windows, Linux, and macOS
+- Web build support through WebAssembly and Trunk
+- Native plugin runtime via versioned plugin APIs
+- Custom DPR measurement plugin for quantity estimation and reporting
+- Automation support through CLI, MCP, and JSON-based tooling
 
-<p align="center">
-  <a href="https://www.opencadstudio.com"><strong>Launch the web app</strong></a>
-  ·
-  <a href="https://github.com/HakanSeven12/OpenCADStudio/releases/latest"><strong>Download the desktop app</strong></a>
-  ·
-  <a href="https://github.com/HakanSeven12/OpenCADStudio/discussions"><strong>Join the discussion</strong></a>
-</p>
+## System architectures
 
-<p align="center">
-  <img src="site/workspace.png" alt="Open CAD Studio workspace" width="100%">
-</p>
+### 1. Desktop architecture
 
-## Overview
+The desktop application is the primary native build and is designed around a Rust-based GUI and document engine.
 
-Open CAD Studio is a cross-platform application for technical drawing, layout work, and solid modeling. It reads and writes DWG and DXF drawings natively, with a shared editing core across the desktop and browser versions.
+Main components:
 
-The project is under active development. Keep backups of important production drawings and report reproducible problems through [GitHub Issues](https://github.com/HakanSeven12/OpenCADStudio/issues).
+- `src/` — main application logic, commands, configuration, UI entry points, and app modules
+- `crates/` — shared runtime and plugin support libraries
+- `assets/` — icons, fonts, patterns, linetypes, and project resources
+- `locales/` — translation catalogs for multi-language support
+- `plugins/` — external and in-repo plugin packages
 
-## Highlights
+The host application includes:
 
-- **Native drawing workflow** — open, edit, recover, and save DWG and DXF files without a conversion service.
-- **Precise 2D drafting** — lines, polylines, curves, splines, hatches, object snaps, tracking, layers, blocks, and external references.
-- **Documentation tools** — text, dimensions, leaders, tolerances, tables, model space, paper space, viewports, and plot styles.
-- **Kernel-backed 3D modeling** — solid primitives, extrusion, revolution, sweep, loft, Boolean operations, and ACIS entity tessellation.
-- **GPU rendering** — accelerated 2D and 3D viewports through `wgpu`, with orthographic and perspective cameras.
-- **Extensible workflows** — native plugins, command scripts, headless conversion, and a line-based JSON automation API.
+- UI layer built with `iced`
+- CAD scene/document model
+- command and tool system
+- DWG/DXF file support
+- rendering pipeline and geometry handling
+- plugin host runtime
 
-<p align="center">
-  <img src="site/modeling.png" alt="3D model in Open CAD Studio" width="100%">
-</p>
+### 2. Web architecture
 
-## File workflows
+The project supports a browser build using WebAssembly and JavaScript interop.
 
-| Format or workflow | Support |
-| --- | --- |
-| DWG | Read and write; versioned save targets from R14 through 2018 |
-| DXF | Read and write; versioned save targets from R14 through 2018 |
-| BAK / SV$ | Open drawing backups and autosave files |
-| OBJ | Import polygon meshes |
-| LandXML | Import `CgPoint` survey points |
-| STL | Export 3D mesh data |
-| STEP AP203 | Export 3D mesh data |
-| PDF | Plot layouts and selected geometry on desktop |
-| CSV | Extract entity property data |
-| CTB / STB | Load and edit plot style tables |
+Key web-related pieces:
 
-## Desktop or web
+- `web/` — static web assets
+- `index.html` and `web-app.html` — browser loading and app entry
+- `build.rs` and `Trunk.toml` — app bundling and web build configuration
+- `wasm32-unknown-unknown` target support for browser execution
 
-Use the [web app](https://www.opencadstudio.com) for immediate access with no installation. Drawings are selected through the browser and saved as local downloads.
+This allows the CAD editor to run in a browser without requiring the full desktop native environment, while still preserving a common document logic layer.
 
-Use the desktop application for native file associations, file-manager thumbnails, system printing, PDF output, external plugins, command scripts, and headless automation. Release builds are available for Windows, Linux, and Apple Silicon macOS.
+### 3. Plugin architecture
 
-## Install
+The plugin system is designed around an external plugin host model. Plugins are not compiled into the core host; instead they are loaded as separate dynamic libraries and communicate with the host through a versioned API contract.
 
-Download all current packages from the [latest release](https://github.com/HakanSeven12/OpenCADStudio/releases/latest).
+Relevant project files:
 
-### Windows
+- `crates/ocs_plugin_api/` — plugin contract and host-facing API
+- `docs/plugin-architecture.md` — plugin runtime design and rules
+- `plugins/README.md` — plugin registry and marketplace notes
 
-Choose one of these signed x86-64 packages:
+The architecture separates:
 
-- `OpenCADStudio-*-windows-x86_64-installer.msi` — recommended installer with Start Menu shortcuts, DWG/DXF file associations, and drawing thumbnails.
-- `OpenCADStudio-*-windows-x86_64-portable.exe` — standalone application; no installation required.
+- host runtime (core app)
+- plugin process (external add-on)
+- optional domain logic library (engineering calculations)
 
-### Linux
+This keeps the main application stable while allowing plugins to extend commands, tabs, and domain-specific workflows.
 
-Download the x86-64 AppImage, make it executable, and run it:
+### 4. Automation and MCP architecture
 
-```bash
-chmod +x OpenCADStudio-*-linux-x86_64.AppImage
-./OpenCADStudio-*-linux-x86_64.AppImage
+The project also includes automation and AI-bridge capabilities.
+
+- CLI conversion and export commands
+- headless serve mode
+- MCP endpoint for external tool integration
+- JSON-line communication patterns for automation
+
+This is especially useful for engineering workflows where CAD tools need to be called from scripts, plugins, or AI-driven integration layers.
+
+## Supported platforms
+
+The project targets the following environments:
+
+| Platform | Status | Notes |
+| --- | --- | --- |
+| Windows | Primary desktop target | Installer, portable, native app support |
+| Linux | Supported | Desktop app and native toolchain support |
+| macOS | Supported | Apple Silicon focus |
+| Web / WASM | Supported | Browser runtime via Trunk and WebAssembly |
+
+## Installed and bundled plugins
+
+The repository includes the following plugin package in the workspace:
+
+### DPR Measurement plugin
+
+Location: `plugins/dpr-measurement/`
+
+This plugin is a prototype quantity and measurement extension for DPR-style workflows. It is designed to support:
+
+- custom ribbon tabs and commands
+- wall quantity measurement
+- unit configuration
+- status/dashboard summaries
+- project measurement reporting
+
+Example commands include:
+
+- `DPR_SET_UNITS`
+- `DPR_SET_WALL_HEIGHT`
+- `DPR_SET_WALL_THICKNESS`
+- `DPR_PICK_WALL`
+- `DPR_SUMMARY`
+- `DPR_DASHBOARD`
+- `DPR_RESET`
+
+This makes it suitable as a base for construction or civil quantity tracking features.
+
+## Plugin registry overview
+
+The repository also includes a curated registry of third-party plugins in `plugins/registry.json`. The currently registered ecosystem includes packages such as:
+
+- Example Plugin
+- Storm Sewer
+- HydroComplete
+- Land Survey
+- MCP Bridge
+- Python REPL Plugin
+
+These plugins demonstrate the broader plugin ecosystem around the Open CAD Studio host and are compatible with the plugin contract model.
+
+## Repository layout
+
+```text
+OpenCADStudio-main/
+├── src/                     # Core application logic and modules
+├── crates/                  # Shared libraries and API contracts
+├── plugins/                 # Plugin packages and registry
+│   ├── dpr-measurement/     # DPR measurement plugin
+│   ├── README.md           # Plugin docs
+│   └── registry.json       # Marketplace plugin registry
+├── docs/                    # Architecture, plugin, automation, and release docs
+├── locales/                 # Translation files
+├── assets/                  # CAD assets, icons, fonts, patterns
+├── web/                     # Web assets and browser resources
+├── tests/                   # Regression and feature validation tests
+├── Cargo.toml               # Rust workspace definition
+├── build.rs                 # Build hook
+├── README.md                # Project overview
+├── LICENSE                  # Licensing terms
+├── SECURITY.md              # Security policy
+└── i18n.toml                # Internationalization config
 ```
 
-### macOS
+## Getting started
 
-The published macOS package supports Apple Silicon:
+### Prerequisites
 
-1. Download `OpenCADStudio-*-macos-arm64.dmg`.
-2. Open the image and drag `OpenCADStudio.app` into **Applications**.
-3. If Gatekeeper blocks the first launch, approve the app from **System Settings → Privacy & Security**.
-
-The application is ad-hoc signed but is not currently notarized by Apple.
-
-## Languages
-
-Open CAD Studio can follow the system language or use any of these 21 interface languages:
-
-> Arabic · Brazilian Portuguese · Bulgarian · Czech · Dutch · English · Finnish · French · German · Greek · Hindi · Hungarian · Italian · Japanese · Korean · Polish · Russian · Simplified Chinese · Spanish · Traditional Chinese · Turkish
-
-Change the language from the application settings. The browser version also uses the browser's preferred locale when **System** is selected.
-
-## Build from source
-
-### Desktop
-
-Requirements:
-
+- Rust toolchain (current stable)
 - Git
-- Current stable Rust toolchain
-- Platform graphics and font development libraries
+- Platform build dependencies for your target OS
 
-On Ubuntu or Debian, install the native dependencies with:
-
-```bash
-sudo apt update
-sudo apt install libgl1-mesa-dev libx11-dev libxcursor-dev libxi-dev \
-  libxrandr-dev libxkbcommon-dev libwayland-dev libfontconfig1-dev \
-  libfreetype6-dev
-```
-
-Then build and run:
+### Run the desktop app
 
 ```bash
-git clone https://github.com/HakanSeven12/OpenCADStudio.git
-cd OpenCADStudio
-cargo build --release --bin OpenCADStudio
+cargo run
 ```
 
-The resulting binary is written to `target/release/OpenCADStudio` (`OpenCADStudio.exe` on Windows).
+### Build the release binary
 
-### Web
+```bash
+cargo build --release
+```
 
-Install the WebAssembly target and build tools once:
+### Run the web build
 
 ```bash
 rustup target add wasm32-unknown-unknown
 cargo install trunk wasm-bindgen-cli
-```
-
-Start the development server:
-
-```bash
 trunk serve
 ```
 
-## Automation
+## Development notes
 
-The desktop binary supports one-shot conversion, a persistent headless server, and a client-neutral MCP endpoint for AI applications:
+This project is designed for engineering workflows, drawing authoring, measurement, and extensibility. It combines a native CAD editor with modern plugin-based workflow design and automation support.
 
-```bash
-OpenCADStudio --export input.dwg output.dxf
-OpenCADStudio --serve
-OpenCADStudio --serve --port 4242
-OpenCADStudio --mcp
-```
+Important notes:
 
-The automation server exchanges one JSON object per line over standard input/output or a local TCP socket. The self-contained MCP endpoint exposes the live desktop editor through the same tools to every compatible client. To connect a client, configure it to launch `OpenCADStudio --mcp`. See the [MCP control guide](docs/automation/README.md).
-
-## Plugins
-
-Desktop plugins run in separate processes and communicate with the host through the versioned plugin API. The browser build does not load native plugins.
-
-- [Plugin architecture](docs/plugin-architecture.md)
-- [Plugin template](docs/plugin-template/README.md)
-- [Plugin registry](plugins/README.md)
-
-## Project documentation
-
-- [Automation API](docs/automation/README.md)
-- [Plugin architecture](docs/plugin-architecture.md)
-- [Tessellation pipeline](docs/tessellation.md)
-- [Security policy](SECURITY.md)
-
-## Contributing
-
-Bug reports, focused pull requests, translations, documentation improvements, and plugin contributions are welcome.
-
-- Search existing [issues](https://github.com/HakanSeven12/OpenCADStudio/issues) before opening a new report.
-- Use [Discussions](https://github.com/HakanSeven12/OpenCADStudio/discussions) for questions and ideas.
-- Report vulnerabilities privately by following the [security policy](SECURITY.md).
-
-Application translations live in `locales/*/opencadstudio.ftl`; source labels map through
-`src/locale_catalog.rs`. After editing translations, run `python3 scripts/export-locales.py`
-to refresh web and desktop packaging labels. Validate with `python3 scripts/test_site.py`
-and `cargo test --lib i18n::tests`.
-
-## Project growth
-
-### Stars
-
-<a href="https://github.com/HakanSeven12/OpenCADStudio/stargazers">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://www.opencadstudio.com/star-history-dark.svg">
-    <source media="(prefers-color-scheme: light)" srcset="https://www.opencadstudio.com/star-history-light.svg">
-    <img alt="Open CAD Studio star history" src="https://www.opencadstudio.com/star-history-light.svg">
-  </picture>
-</a>
-
-### Release downloads
-
-<a href="https://github.com/HakanSeven12/OpenCADStudio/releases">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://www.opencadstudio.com/download-history-dark.svg">
-    <source media="(prefers-color-scheme: light)" srcset="https://www.opencadstudio.com/download-history-light.svg">
-    <img alt="Open CAD Studio release download history" src="https://www.opencadstudio.com/download-history-light.svg">
-  </picture>
-</a>
-
-## Support the project
-
-If Open CAD Studio helps your work, support continued development through [GitHub Sponsors](https://github.com/sponsors/HakanSeven12) or [Patreon](https://www.patreon.com/HakanSeven12).
+- Core app logic is Rust-first and cross-platform.
+- Plugin compatibility is API-versioned and not tied to host internals.
+- The host prefers external add-ons instead of hard-coding feature sets.
+- The project is built for both desktop productivity and browser accessibility.
 
 ## License
 
-Open CAD Studio is distributed under the [GNU General Public License v3.0](LICENSE).
+This project is distributed under the GNU General Public License v3.0. See the `LICENSE` file for details.
+
+## Support and contributions
+
+This repository is intended for active development and extension. Contributions and plugin experiments are welcome, especially for tooling automation, quantity workflows, and new domain-specific CAD extensions.
