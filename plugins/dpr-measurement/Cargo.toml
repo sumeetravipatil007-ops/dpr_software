@@ -1,0 +1,12 @@
+[package]
+name = "dpr-measurement-plugin"
+version = "0.1.0"
+edition = "2021"
+description = "DPR measurement prototype for Open CAD Studio"
+license = "GPL-3.0-only"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+ocs_plugin_api = { path = "../../crates/ocs_plugin_api", features = ["host"] }

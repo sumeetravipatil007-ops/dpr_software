@@ -1,0 +1,16 @@
+[plugin]
+id = "opencad.dpr.measurement"
+name = "DPR Measurement"
+version = "0.1.0"
+description = "Wall and activity measurement prototype for DPR reporting"
+author = "Your Name"
+license = "GPL-3.0-only"
+repository = "your-account/your-dpr-plugin-repo"
+
+[opencad]
+api_version = 6
+acadrust_source = "git+https://git@github.com/HakanSeven12/cadcodec.git?rev=5b56571a190e7a17c8f12d36390d2938b0fb72f7#5b56571a190e7a17c8f12d36390d2938b0fb72f7"
+rustc_version = "rustc 1.98.1 (48a229cea 2026-09-01)"
+ribbon_order = 80
+command_prefixes = ["DPR_"]
+xdata_apps = ["DPRMEAS"]
